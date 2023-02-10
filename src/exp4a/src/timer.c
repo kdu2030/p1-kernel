@@ -2,6 +2,7 @@
 #include "printf.h"
 #include "peripherals/timer.h"
 #include "timer.h"
+#include "sched.h"
 
 #ifdef USE_QEMU
 unsigned int interval = (1 << 26); // xzl: around 1 sec
@@ -34,6 +35,9 @@ void generic_timer_init ( void )
 
 void handle_generic_timer_irq( void ) 
 {
+	if(num_waiting > 0){
+		printf("Found waiting task! \n");
+	}
 	printf("Timer interrupt received. next in %u ticks\n\r", interval);
 	gen_timer_reset(interval);
 }

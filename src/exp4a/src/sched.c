@@ -7,6 +7,9 @@ struct task_struct *current = &(init_task);
 struct task_struct * task[NR_TASKS] = {&(init_task), };
 int nr_tasks = 1;
 
+wait_struct* waiting_tasks[NR_TASKS] = {0, };
+int num_waiting = 0;
+
 void _schedule(void)
 {
 	int next, c;
@@ -66,3 +69,13 @@ void schedule_tail(void) {
 	/* nothing */
 }
 
+void sleep(int secs){
+	wait_struct new_wait = { .task = current, .secs_remaining = secs};
+	for(int i = 0; i < NR_TASKS; i++){
+		if(waiting_tasks[i] == 0){
+			waiting_tasks[i] = &new_wait;
+		}
+	}
+	num_waiting++;
+	// TODO: Change current task status to waiting and call scheduler
+}

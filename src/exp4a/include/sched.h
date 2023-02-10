@@ -17,6 +17,7 @@
 extern struct task_struct *current;
 extern struct task_struct * task[NR_TASKS];
 extern int nr_tasks;
+extern int num_waiting;
 
 struct cpu_context {
 	unsigned long x19;
@@ -42,6 +43,14 @@ struct task_struct {
 	long preempt_count;
 };
 
+typedef struct wait_struct {
+	struct task_struct* task;
+	int secs_remaining;
+} wait_struct;
+
+extern wait_struct* waiting_tasks[NR_TASKS];
+
+extern void sleep(int secs);
 extern void sched_init(void);
 extern void schedule(void);
 //extern void timer_tick(void);
