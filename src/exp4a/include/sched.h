@@ -13,6 +13,7 @@
 #define LAST_TASK task[NR_TASKS-1]
 
 #define TASK_RUNNING				0
+#define TASK_WAITING				1
 
 extern struct task_struct *current;
 extern struct task_struct * task[NR_TASKS];

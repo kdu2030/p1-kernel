@@ -35,10 +35,15 @@ void generic_timer_init ( void )
 
 void handle_generic_timer_irq( void ) 
 {
-	if(num_waiting > 0){
-		printf("Found waiting task! \n");
+	int wait_count = 0;
+	for(int i = 0; i < NR_TASKS; i++){
+		if(waiting_tasks[i] != 0){
+			waiting_tasks[i]->secs_remaining--;
+			wait_count++;
+		}
 	}
-	printf("Timer interrupt received. next in %u ticks\n\r", interval);
+	printf("Wait count %d \n", wait_count);
+	// printf("Timer interrupt received. next in %u ticks\n\r", interval);
 	gen_timer_reset(interval);
 }
 

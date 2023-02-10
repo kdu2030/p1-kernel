@@ -41,7 +41,14 @@ void process(char *array)
 #endif
 			delay(CHAR_DELAY);
 		} 
-		sleep(3);
+		if(array[0] == '1'){
+			sleep(100);
+		}
+		else {
+			printf("I'm sleeping!");
+			sleep(200);
+		}
+		
 		schedule(); // yield
 	}
 }

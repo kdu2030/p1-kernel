@@ -74,8 +74,11 @@ void sleep(int secs){
 	for(int i = 0; i < NR_TASKS; i++){
 		if(waiting_tasks[i] == 0){
 			waiting_tasks[i] = &new_wait;
+			break;
 		}
 	}
 	num_waiting++;
 	// TODO: Change current task status to waiting and call scheduler
+	current->state = TASK_WAITING;
+	schedule();
 }
