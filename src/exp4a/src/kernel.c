@@ -5,6 +5,7 @@
 #include "fork.h"
 #include "sched.h"
 #include "mini_uart.h"
+#include "irq.h"
 
 #ifdef USE_LFB
 #include "lfb.h"
@@ -49,27 +50,38 @@ void kernel_main(void)
 	uart_init();
 	init_printf(0, putc);
 
+
+	irq_vector_init();
+	generic_timer_init();
+	enable_interrupt_controller();
+	enable_irq();
+	
+
 	printf("kernel boots\r\n");	
 
-#ifdef USE_LFB // (optional) init output to the graphical console
-	lfb_init(); 
-	lfb_showpicture();
-	lfb_print(0, 240, "kernel boots");
-#endif		
+// #ifdef USE_LFB // (optional) init output to the graphical console
+// 	lfb_init(); 
+// 	lfb_showpicture();
+// 	lfb_print(0, 240, "kernel boots");
+// #endif		
 
-	int res = copy_process((unsigned long)&process, (unsigned long)"12345");
-	if (res != 0) {
-		printf("error while starting process 1");
-		return;
-	}
+// 	int res = copy_process((unsigned long)&process, (unsigned long)"12345");
+// 	if (res != 0) {
+// 		printf("error while starting process 1");
+// 		return;
+// 	}
 	
-	res = copy_process((unsigned long)&process, (unsigned long)"abcde");
-	if (res != 0) {
-		printf("error while starting process 2");
-		return;
-	}
+// 	res = copy_process((unsigned long)&process, (unsigned long)"abcde");
+// 	if (res != 0) {
+// 		printf("error while starting process 2");
+// 		return;
+// 	}
 
-	while (1){
-		schedule();
-	}	
+// 	while (1){
+// 		schedule();
+// 	}	
+
+ 	while (1) {
+        uart_send(uart_recv());
+    }
 }
