@@ -40,9 +40,14 @@ void handle_generic_timer_irq( void )
 		if(waiting_tasks[i] != 0){
 			waiting_tasks[i]->secs_remaining--;
 			wait_count++;
+			
+			if(waiting_tasks[i]->secs_remaining <= 0){
+				waiting_tasks[i]->task->state = TASK_READY;
+				waiting_tasks[i] = 0;
+			}
 		}
 	}
-	printf("Wait count %d \n", wait_count);
+	//printf("Wait count %d \n", wait_count);
 	// printf("Timer interrupt received. next in %u ticks\n\r", interval);
 	gen_timer_reset(interval);
 }

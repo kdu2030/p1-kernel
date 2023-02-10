@@ -30,6 +30,11 @@ void process(char *array)
 #endif 
 
 	while (1){
+		
+		if(array[0] == '1'){
+			sleep(5);
+		}
+
 		for (int i = 0; i < 5; i++){
 			uart_send(array[i]);
 #ifdef USE_LFB  // (optional) output to the graphical console
@@ -41,13 +46,6 @@ void process(char *array)
 #endif
 			delay(CHAR_DELAY);
 		} 
-		if(array[0] == '1'){
-			sleep(100);
-		}
-		else {
-			printf("I'm sleeping!");
-			sleep(200);
-		}
 		
 		schedule(); // yield
 	}

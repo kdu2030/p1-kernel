@@ -25,7 +25,7 @@ void _schedule(void)
 
 		for (int i = 0; i < NR_TASKS; i++){
 			p = task[i];
-			if (p && p->state == TASK_RUNNING && p->counter > c) {
+			if (p && (p->state == TASK_RUNNING || p->state == TASK_READY) && p->counter > c) {
 				c = p->counter;
 				next = i;
 			}
