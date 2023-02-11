@@ -1,6 +1,7 @@
 #include "sched.h"
 #include "irq.h"
 #include "printf.h"
+#include "fork.h"
 
 static struct task_struct init_task = INIT_TASK;
 struct task_struct *current = &(init_task);
@@ -10,6 +11,9 @@ int nr_tasks = 1;
 wait_struct* waiting_tasks[NR_TASKS] = {0, };
 int num_waiting = 0;
 
+//Will be initialized in kernel_main
+int idle_task = 0;
+
 void _schedule(void)
 {
 	int next, c;
@@ -17,6 +21,13 @@ void _schedule(void)
 	while (1) {
 		c = -1;	// the maximum counter found so far
 		next = 0;
+
+		// If all the tasks are waiting except init_task and the idle task
+		if(num_waiting == (nr_tasks - 2)){
+			c = task[idle_task]->counter;
+			next = idle_task;
+			break;
+		}
 
 		/* Iterates over all tasks and tries to find a task in 
 		TASK_RUNNING state with the maximum counter. If such 
@@ -40,7 +51,7 @@ void _schedule(void)
 		Hence, we recharge counters. Bump counters for all tasks once. */
 		for (int i = 0; i < NR_TASKS; i++) {
 			p = task[i];
-			if (p) {
+			if (p && p->state != TASK_WAITING) {
 				p->counter = (p->counter >> 1) + p->priority; // The increment depends on a task's priority.
 			}
 		}
@@ -81,4 +92,25 @@ void sleep(int secs){
 	// TODO: Change current task status to waiting and call scheduler
 	current->state = TASK_WAITING;
 	schedule();
+}
+
+void idle_task_body(void){
+	while(1){
+		printf("Going to WFI \n");
+		asm("wfi");
+		schedule();
+	}
+}
+
+void create_idle_task(void){
+	copy_process( (unsigned long)&idle_task_body, 0);
+	// Note: This will only work if we create the idle task before any other task is created.
+	for(int i = 0; i < nr_tasks; i++){
+		if(task[i] && task[i]->cpu_context.x19 == (unsigned long)&idle_task_body){
+			task[i]->state = TASK_IDLE;
+			idle_task = i;
+			return;
+		}
+	}
+	return;
 }

@@ -31,9 +31,10 @@ void process(char *array)
 
 	while (1){
 		
-		if(array[0] == '1'){
-			sleep(5);
-		}
+		sleep(5);
+		// if(array[0] == '1'){
+		// 	sleep(3);
+		// }
 
 		for (int i = 0; i < 5; i++){
 			uart_send(array[i]);
@@ -64,6 +65,8 @@ void kernel_main(void)
 	
 
 	printf("kernel boots\r\n");	
+
+	create_idle_task();
 
 #ifdef USE_LFB // (optional) init output to the graphical console
 	lfb_init(); 

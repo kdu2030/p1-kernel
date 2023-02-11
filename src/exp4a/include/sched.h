@@ -15,6 +15,7 @@
 #define TASK_RUNNING				0
 #define TASK_WAITING				1
 #define TASK_READY					2
+#define TASK_IDLE					3
 
 extern struct task_struct *current;
 extern struct task_struct * task[NR_TASKS];
@@ -55,6 +56,7 @@ extern wait_struct* waiting_tasks[NR_TASKS];
 extern void sleep(int secs);
 extern void sched_init(void);
 extern void schedule(void);
+extern void create_idle_task(void);
 //extern void timer_tick(void);
 //extern void preempt_disable(void);
 //extern void preempt_enable(void);

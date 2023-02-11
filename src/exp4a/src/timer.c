@@ -44,6 +44,7 @@ void handle_generic_timer_irq( void )
 			if(waiting_tasks[i]->secs_remaining <= 0){
 				waiting_tasks[i]->task->state = TASK_READY;
 				waiting_tasks[i] = 0;
+				num_waiting--;
 			}
 		}
 	}
