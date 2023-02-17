@@ -48,6 +48,16 @@ void kernel_main(void)
 		printf("error while starting process 2");
 		return;
 	}
+	res = copy_process((unsigned long) &process, (unsigned long) "Hello");
+	if (res != 0){
+		printf("Error while starting process 3");
+		return;
+	}
+	res = copy_process((unsigned long) &process, (unsigned long) "there");
+	if(res != 0){
+		printf("Error while starting process 4");
+		return;
+	}
 
 	while (1){
 		schedule();
