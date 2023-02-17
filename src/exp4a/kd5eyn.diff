@@ -1,0 +1,371 @@
+Binary files /home/kd5eyn/p1-kernel/src/exp4a/build/boot_s.o and ./build/boot_s.o differ
+Binary files /home/kd5eyn/p1-kernel/src/exp4a/build/entry_s.o and ./build/entry_s.o differ
+Binary files /home/kd5eyn/p1-kernel/src/exp4a/build/fork_c.o and ./build/fork_c.o differ
+diff -r --new-file /home/kd5eyn/p1-kernel/src/exp4a/build/irq_c.d ./build/irq_c.d
+2,3c2
+<  include/entry.h include/peripherals/irq.h include/peripherals/base.h \
+<  include/sched.h
+---
+>  include/entry.h include/peripherals/irq.h include/peripherals/base.h
+Binary files /home/kd5eyn/p1-kernel/src/exp4a/build/irq_c.o and ./build/irq_c.o differ
+diff -r --new-file /home/kd5eyn/p1-kernel/src/exp4a/build/irq_s.d ./build/irq_s.d
+0a1
+> build/irq_s.o: src/irq.S
+Binary files /home/kd5eyn/p1-kernel/src/exp4a/build/irq_s.o and ./build/irq_s.o differ
+Binary files /home/kd5eyn/p1-kernel/src/exp4a/build/kernel8.elf and ./build/kernel8.elf differ
+Binary files /home/kd5eyn/p1-kernel/src/exp4a/build/kernel_c.o and ./build/kernel_c.o differ
+Binary files /home/kd5eyn/p1-kernel/src/exp4a/build/lfb_c.o and ./build/lfb_c.o differ
+Binary files /home/kd5eyn/p1-kernel/src/exp4a/build/mbox_c.o and ./build/mbox_c.o differ
+Binary files /home/kd5eyn/p1-kernel/src/exp4a/build/mini_uart_c.o and ./build/mini_uart_c.o differ
+Binary files /home/kd5eyn/p1-kernel/src/exp4a/build/mm_c.o and ./build/mm_c.o differ
+Binary files /home/kd5eyn/p1-kernel/src/exp4a/build/mm_s.o and ./build/mm_s.o differ
+Binary files /home/kd5eyn/p1-kernel/src/exp4a/build/printf_c.o and ./build/printf_c.o differ
+diff -r --new-file /home/kd5eyn/p1-kernel/src/exp4a/build/sched_c.d ./build/sched_c.d
+2c2
+<  include/printf.h
+---
+>  include/printf.h include/fork.h
+Binary files /home/kd5eyn/p1-kernel/src/exp4a/build/sched_c.o and ./build/sched_c.o differ
+Binary files /home/kd5eyn/p1-kernel/src/exp4a/build/sched_s.o and ./build/sched_s.o differ
+Binary files /home/kd5eyn/p1-kernel/src/exp4a/build/timer_c.o and ./build/timer_c.o differ
+Binary files /home/kd5eyn/p1-kernel/src/exp4a/build/timer_s.o and ./build/timer_s.o differ
+Binary files /home/kd5eyn/p1-kernel/src/exp4a/build/utils_s.o and ./build/utils_s.o differ
+diff -r --new-file /home/kd5eyn/p1-kernel/src/exp4a/include/sched.h ./include/sched.h
+15a16,18
+> #define TASK_WAITING				1
+> #define TASK_READY					2
+> #define TASK_IDLE					3
+19a23
+> extern int num_waiting;
+44a49,56
+> typedef struct wait_struct {
+> 	struct task_struct* task;
+> 	int secs_remaining;
+> } wait_struct;
+> 
+> extern wait_struct* waiting_tasks[NR_TASKS];
+> 
+> extern void sleep(int secs);
+46a59
+> extern void create_idle_task(void);
+Binary files /home/kd5eyn/p1-kernel/src/exp4a/kd5eyn-2.tar.gz and ./kd5eyn-2.tar.gz differ
+diff -r --new-file /home/kd5eyn/p1-kernel/src/exp4a/kd5eyn-diff.txt ./kd5eyn-diff.txt
+0a1,51
+> Binary files /home/kd5eyn/p1-kernel/src/exp4a/build/boot_s.o and ./build/boot_s.o differ
+> Binary files /home/kd5eyn/p1-kernel/src/exp4a/build/entry_s.o and ./build/entry_s.o differ
+> Binary files /home/kd5eyn/p1-kernel/src/exp4a/build/fork_c.o and ./build/fork_c.o differ
+> diff -r --new-file /home/kd5eyn/p1-kernel/src/exp4a/build/irq_c.d ./build/irq_c.d
+> 2,3c2
+> <  include/entry.h include/peripherals/irq.h include/peripherals/base.h \
+> <  include/sched.h
+> ---
+> >  include/entry.h include/peripherals/irq.h include/peripherals/base.h
+> Binary files /home/kd5eyn/p1-kernel/src/exp4a/build/irq_c.o and ./build/irq_c.o differ
+> diff -r --new-file /home/kd5eyn/p1-kernel/src/exp4a/build/irq_s.d ./build/irq_s.d
+> 0a1
+> > build/irq_s.o: src/irq.S
+> Binary files /home/kd5eyn/p1-kernel/src/exp4a/build/irq_s.o and ./build/irq_s.o differ
+> Binary files /home/kd5eyn/p1-kernel/src/exp4a/build/kernel8.elf and ./build/kernel8.elf differ
+> Binary files /home/kd5eyn/p1-kernel/src/exp4a/build/kernel_c.o and ./build/kernel_c.o differ
+> Binary files /home/kd5eyn/p1-kernel/src/exp4a/build/lfb_c.o and ./build/lfb_c.o differ
+> Binary files /home/kd5eyn/p1-kernel/src/exp4a/build/mbox_c.o and ./build/mbox_c.o differ
+> Binary files /home/kd5eyn/p1-kernel/src/exp4a/build/mini_uart_c.o and ./build/mini_uart_c.o differ
+> Binary files /home/kd5eyn/p1-kernel/src/exp4a/build/mm_c.o and ./build/mm_c.o differ
+> Binary files /home/kd5eyn/p1-kernel/src/exp4a/build/mm_s.o and ./build/mm_s.o differ
+> Binary files /home/kd5eyn/p1-kernel/src/exp4a/build/printf_c.o and ./build/printf_c.o differ
+> diff -r --new-file /home/kd5eyn/p1-kernel/src/exp4a/build/sched_c.d ./build/sched_c.d
+> 2c2
+> <  include/printf.h
+> ---
+> >  include/printf.h include/fork.h
+> Binary files /home/kd5eyn/p1-kernel/src/exp4a/build/sched_c.o and ./build/sched_c.o differ
+> Binary files /home/kd5eyn/p1-kernel/src/exp4a/build/sched_s.o and ./build/sched_s.o differ
+> Binary files /home/kd5eyn/p1-kernel/src/exp4a/build/timer_c.o and ./build/timer_c.o differ
+> Binary files /home/kd5eyn/p1-kernel/src/exp4a/build/timer_s.o and ./build/timer_s.o differ
+> Binary files /home/kd5eyn/p1-kernel/src/exp4a/build/utils_s.o and ./build/utils_s.o differ
+> diff -r --new-file /home/kd5eyn/p1-kernel/src/exp4a/include/sched.h ./include/sched.h
+> 15a16,18
+> > #define TASK_WAITING				1
+> > #define TASK_READY					2
+> > #define TASK_IDLE					3
+> 19a23
+> > extern int num_waiting;
+> 44a49,56
+> > typedef struct wait_struct {
+> > 	struct task_struct* task;
+> > 	int secs_remaining;
+> > } wait_struct;
+> > 
+> > extern wait_struct* waiting_tasks[NR_TASKS];
+> > 
+> > extern void sleep(int secs);
+> 46a59
+> > extern void create_idle_task(void);
+> Binary files /home/kd5eyn/p1-kernel/src/exp4a/kd5eyn-2.tar.gz and ./kd5eyn-2.tar.gz differ
+Binary files /home/kd5eyn/p1-kernel/src/exp4a/kernel8.img and ./kernel8.img differ
+diff -r --new-file /home/kd5eyn/p1-kernel/src/exp4a/src/fork.c ./src/fork.c
+26a27
+> 
+diff -r --new-file /home/kd5eyn/p1-kernel/src/exp4a/src/irq.c ./src/irq.c
+29,34c29,34
+< //void enable_interrupt_controller()
+< //{
+< //    // Enables Core 0 Timers interrupt control for the generic timer
+< //    put32(TIMER_INT_CTRL_0, TIMER_INT_CTRL_0_VALUE);
+< //}
+< //
+---
+> void enable_interrupt_controller()
+> {
+>    // Enables Core 0 Timers interrupt control for the generic timer
+>    put32(TIMER_INT_CTRL_0, TIMER_INT_CTRL_0_VALUE);
+> }
+> 
+40,42c40,49
+< 	printf("We do not expect pending irq to happen: %x\r\n", irq);
+< 	while (1)
+< 		;
+---
+>     switch (irq) {
+>         case (GENERIC_TIMER_INTERRUPT):
+>             handle_generic_timer_irq();
+>             break;
+>         default:
+>             printf("Unknown pending irq: %x\r\n", irq);
+>     }
+> 	// printf("We do not expect pending irq to happen: %x\r\n", irq);
+> 	// while (1)
+> 	// 	;
+diff -r --new-file /home/kd5eyn/p1-kernel/src/exp4a/src/irq.S ./src/irq.S
+0a1,15
+> .globl irq_vector_init
+> irq_vector_init:
+> 	adr	x0, vectors		// load VBAR_EL1 with virtual
+> 	msr	vbar_el1, x0		// vector table address
+> 	ret
+> 
+> .globl enable_irq
+> enable_irq:
+> 	msr daifclr, #2
+> 	ret
+> 
+> .globl disable_irq
+> disable_irq:
+> 	msr	daifset, #0xf
+> 	ret
+diff -r --new-file /home/kd5eyn/p1-kernel/src/exp4a/src/kernel.c ./src/kernel.c
+7a8
+> #include "irq.h"
+31a33,38
+> 		
+> 		sleep(5);
+> 		// if(array[0] == '1'){
+> 		// 	sleep(3);
+> 		// }
+> 
+42a50
+> 		
+51a60,66
+> 
+> 	irq_vector_init();
+> 	generic_timer_init();
+> 	enable_interrupt_controller();
+> 	enable_irq();
+> 	
+> 
+53a69,70
+> 	create_idle_task();
+> 
+74a92,95
+> 
+>  	// while (1) {
+>     //     uart_send(uart_recv());
+>     // }
+diff -r --new-file /home/kd5eyn/p1-kernel/src/exp4a/src/sched.c ./src/sched.c
+3a4
+> #include "fork.h"
+9a11,16
+> wait_struct* waiting_tasks[NR_TASKS] = {0, };
+> int num_waiting = 0;
+> 
+> //Will be initialized in kernel_main
+> int idle_task = 0;
+> 
+17a25,31
+> 		// If all the tasks are waiting except init_task and the idle task
+> 		if(num_waiting == (nr_tasks - 2)){
+> 			c = task[idle_task]->counter;
+> 			next = idle_task;
+> 			break;
+> 		}
+> 
+25c39
+< 			if (p && p->state == TASK_RUNNING && p->counter > c) {
+---
+> 			if (p && (p->state == TASK_RUNNING || p->state == TASK_READY) && p->counter > c) {
+40c54
+< 			if (p) {
+---
+> 			if (p && p->state != TASK_WAITING) {
+68a83,116
+> void sleep(int secs){
+> 	wait_struct new_wait = { .task = current, .secs_remaining = secs};
+> 	for(int i = 0; i < NR_TASKS; i++){
+> 		if(waiting_tasks[i] == 0){
+> 			waiting_tasks[i] = &new_wait;
+> 			break;
+> 		}
+> 	}
+> 	num_waiting++;
+> 	// TODO: Change current task status to waiting and call scheduler
+> 	current->state = TASK_WAITING;
+> 	schedule();
+> }
+> 
+> void idle_task_body(void){
+> 	while(1){
+> 		printf("Going to WFI \n");
+> 		asm("wfi");
+> 		schedule();
+> 	}
+> }
+> 
+> void create_idle_task(void){
+> 	copy_process( (unsigned long)&idle_task_body, 0);
+> 	// Note: This will only work if we create the idle task before any other task is created.
+> 	for(int i = 0; i < nr_tasks; i++){
+> 		if(task[i] && task[i]->cpu_context.x19 == (unsigned long)&idle_task_body){
+> 			task[i]->state = TASK_IDLE;
+> 			idle_task = i;
+> 			return;
+> 		}
+> 	}
+> 	return;
+> }
+diff -r --new-file /home/kd5eyn/p1-kernel/src/exp4a/src/timer.c ./src/timer.c
+0a1,81
+> #include "utils.h"
+> #include "printf.h"
+> #include "peripherals/timer.h"
+> #include "timer.h"
+> #include "sched.h"
+> 
+> #ifdef USE_QEMU
+> unsigned int interval = (1 << 26); // xzl: around 1 sec
+> #else
+> unsigned int interval = 1 * 1000 * 1000; // xzl: around 1 sec
+> #endif
+> 
+> /* 	These are for Arm generic timer. 
+> 	They are fully functional on both QEMU and Rpi3 
+> 	Recommended.
+> */
+> 
+> // xzl: CNTFRQ_EL0 reports the frequency of the system count
+> static unsigned int read_cntfrq(void)
+> {
+> 	unsigned int val;
+> 	asm volatile ("mrs %0, cntfrq_el0" : "=r" (val));
+>   	return val;
+> }
+> 
+> void generic_timer_init ( void )
+> {
+> 	unsigned int freq  = read_cntfrq();
+> 	printf("System count freq (CNTFRQ) is: %u\n", freq);
+> 
+> 	printf("interval is set to: %u\n", interval);
+> 	gen_timer_init();
+> 	gen_timer_reset(interval);
+> }
+> 
+> void handle_generic_timer_irq( void ) 
+> {
+> 	int wait_count = 0;
+> 	for(int i = 0; i < NR_TASKS; i++){
+> 		if(waiting_tasks[i] != 0){
+> 			waiting_tasks[i]->secs_remaining--;
+> 			wait_count++;
+> 			
+> 			if(waiting_tasks[i]->secs_remaining <= 0){
+> 				waiting_tasks[i]->task->state = TASK_READY;
+> 				waiting_tasks[i] = 0;
+> 				num_waiting--;
+> 			}
+> 		}
+> 	}
+> 	//printf("Wait count %d \n", wait_count);
+> 	// printf("Timer interrupt received. next in %u ticks\n\r", interval);
+> 	gen_timer_reset(interval);
+> }
+> 
+> 
+> /* 
+> 	These are for "System Timer". They are NOT in use by this project. 
+> 	I leave the code here FYI. 
+> 	Rpi3: System Timer works fine. Can generate intrerrupts and be used as a counter for timekeeping.
+> 	QEMU: System Timer can be used for timekeeping. Cannot generate interrupts. 
+> 		You may want to adjust @interval as needed
+> 	cf: 
+> 	https://fxlin.github.io/p1-kernel/exp3/rpi-os/#fyi-other-timers-on-rpi3
+> */
+> unsigned int curVal = 0;
+> 
+> void timer_init ( void )
+> {
+> 	curVal = get32(TIMER_CLO);
+> 	curVal += interval;
+> 	put32(TIMER_C1, curVal);
+> }
+> 
+> void handle_timer_irq( void ) 
+> {
+> 	curVal += interval;
+> 	put32(TIMER_C1, curVal);
+> 	put32(TIMER_CS, TIMER_CS_M1);
+> 	printf("Timer interrupt received\n\r");
+> }
+diff -r --new-file /home/kd5eyn/p1-kernel/src/exp4a/src/timer.S ./src/timer.S
+0a1,20
+> /** Here, the physical timer at EL1 is used with the TimerValue views.
+>  *  Once the count-down has reach 0, the interrupt line is HIGH until
+>  *  a new timer value > 0 is write into the CNTP_TVAL_EL0 system register.
+>  *
+>  *  See AArch64-referenc-manual p.2326 at
+>  *  https://developer.arm.com/docs/ddi0487/ca/arm-architecture-reference-manual-armv8-for-armv8-a-architecture-profile
+>  */
+> 
+> .globl gen_timer_init
+> gen_timer_init:
+> 	mov x0, #1
+> 	msr CNTP_CTL_EL0, x0
+> 	ret
+> 
+> .globl gen_timer_reset
+> gen_timer_reset:
+> #    mov x0, #1
+> #	lsl x0, x0, #24
+> 	msr CNTP_TVAL_EL0, x0
+>     ret
+diff -r --new-file /home/kd5eyn/p1-kernel/src/exp4a/.vscode/c_cpp_properties.json ./.vscode/c_cpp_properties.json
+1,19d0
+< {
+<     "configurations": [
+<         {
+<             "name": "Linux",
+<             "includePath": [
+<                 "${workspaceFolder}/**",
+<                 "/usr/include/linux",
+<                 "${workspaceFolder}/include"
+<             ],
+<             "defines": [],
+<             "compilerPath": "/usr/bin/gcc",
+<             "cStandard": "gnu17",
+<             "cppStandard": "gnu++14",
+<             "intelliSenseMode": "linux-gcc-x64",
+<             "configurationProvider": "ms-vscode.makefile-tools"
+<         }
+<     ],
+<     "version": 4
+< }
+\ No newline at end of file
