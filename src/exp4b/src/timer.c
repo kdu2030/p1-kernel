@@ -5,7 +5,8 @@
 #include "timer.h"
 
 #ifdef USE_QEMU
-unsigned int interval = (1 << 26); // xzl: around 1 sec
+//unsigned int interval = (1 << 26); // xzl: around 1 sec
+unsigned int interval = 62500 * 100;
 #else
 unsigned int interval = 1 * 1000 * 1000; // xzl: around 1 sec
 #endif
@@ -16,6 +17,7 @@ unsigned int interval = 1 * 1000 * 1000; // xzl: around 1 sec
 */
 void generic_timer_init ( void )
 {
+	printf("Frequency is set to: %d\n", get_timer_freq());
 	printf("interval is set to: %u\r\n", interval);
 	gen_timer_init();
 	gen_timer_reset(interval);
@@ -51,4 +53,9 @@ void handle_timer_irq( void )
 	put32(TIMER_C1, curVal);
 	put32(TIMER_CS, TIMER_CS_M1);
 	timer_tick();
+}
+
+unsigned long get_time_ms(void){
+	unsigned long sys_count = get_sys_count();
+	return (unsigned long) sys_count / 62500;
 }

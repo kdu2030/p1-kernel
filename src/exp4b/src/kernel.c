@@ -26,6 +26,7 @@ void process2(char *array)
 	}
 }
 
+
 void kernel_main(void)
 {
 	uart_init();
