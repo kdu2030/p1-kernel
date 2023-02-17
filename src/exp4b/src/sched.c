@@ -93,3 +93,12 @@ void timer_tick()
 	_schedule();
 	disable_irq();
 }
+
+int get_pid(void){
+	for(int i = 0; i < nr_tasks; i++){
+		if(task[i] == current){
+			return i;
+		}
+	}
+	return -1;
+}
