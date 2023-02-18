@@ -47,11 +47,11 @@ struct task_struct {
 struct trace_struct {
 	unsigned long timestamp;
 	int id_from;
-	int pc_from;
-	int sp_from;
+	unsigned long pc_from;
+	unsigned long sp_from;
 	int id_to;
-	int pc_to;
-	int sp_to;
+	unsigned long pc_to;
+	unsigned long sp_to;
 } typedef trace_struct;
 extern trace_struct* traces[MAX_TRACES];
 
@@ -63,8 +63,8 @@ extern void preempt_enable(void);
 extern void switch_to(struct task_struct* next);
 extern void cpu_switch_to(struct task_struct* prev, struct task_struct* next);
 extern int get_pid(void);
-extern int get_interrupt_pc(void);
-extern int get_sp(void);
+extern unsigned long get_interrupt_pc(void);
+extern unsigned long get_sp(void);
 
 #define INIT_TASK \
 /*cpu_context*/	{ {0,0,0,0,0,0,0,0,0,0,0,0,0}, \

@@ -72,18 +72,27 @@ void schedule(void)
 	_schedule();
 }
 
-int get_pid_from_struct(struct task_struct* target_task){
-	for(int i = 0; i < nr_tasks; i++){
-		if(task[i] == target_task){
-			return i;
-		}
-	}
-	return -1;
-}
+// int get_pid_from_struct(struct task_struct* target_task){
+// 	for(int i = 0; i < nr_tasks; i++){
+// 		if(task[i] && task[i] == target_task){
+// 			return i;
+// 		}
+// 	}
+// 	return -1;
+// }
+
+// trace_struct* get_from_trace(struct task_struct* schedule_out){
+// 	for(int i = 0; i < num_traces; i++){
+// 		if(traces[i]->id_from == get_pid_from_struct(schedule_out)){
+// 			return traces[i];
+// 		}
+// 	}
+// 	return 0;
+// }
 
 
-void update_new_trace(struct task_struct* schedule_out, struct task_struct* schedule_in){
-	int schedule_in_pid = get_pid_from_struct(schedule_in);
+void update_new_trace(){
+	int schedule_in_pid = get_pid();
 	trace_struct* schedule_out_trace = traces[num_traces - 1];
 	// Most recent trace of the scheduled in task
 	trace_struct* most_recent_trace = 0;
@@ -94,18 +103,19 @@ void update_new_trace(struct task_struct* schedule_out, struct task_struct* sche
 	}
 
 	schedule_out_trace->id_to = schedule_in_pid;
+	schedule_out_trace->timestamp = get_time_ms();
 
 	if(most_recent_trace){
+		//printf("From %d to %d \n", schedule_out_trace->id_from, most_recent_trace->id_from);
 		schedule_out_trace->pc_to = most_recent_trace->pc_from;
-		schedule_out_trace->sp_to = most_recent_trace->sp_to;
+		schedule_out_trace->sp_to = most_recent_trace->sp_from;
 	}
 	else {
 		// This is the first time that we have run the task
 		schedule_out_trace->pc_to = task[schedule_in_pid]->cpu_context.pc;
 		schedule_out_trace->sp_to = task[schedule_in_pid]->cpu_context.sp;
 	}
-	
-
+	printf("%d from task%d (PC 0x%x SP 0x%x) to task%d (PC 0x%x SP 0x%x) \n", schedule_out_trace->timestamp, schedule_out_trace->id_from, schedule_out_trace->pc_from, schedule_out_trace->sp_from, schedule_out_trace->id_to, schedule_out_trace->pc_to, schedule_out_trace->sp_to);
 }
 
 void switch_to(struct task_struct * next) 
@@ -114,6 +124,9 @@ void switch_to(struct task_struct * next)
 		return;
 	struct task_struct * prev = current;
 	current = next;
+	if(num_traces > 0){
+		update_new_trace(next);
+	}
 	cpu_switch_to(prev, next);
 }
 
@@ -122,19 +135,31 @@ void schedule_tail(void) {
 }
 
 void initialize_trace(){
-	// TODO: Need to handle case when num_traces = 50
+	int current_pid = get_pid();
+	unsigned long time = get_time_ms();
+	unsigned long current_pc = get_interrupt_pc();
+
+	unsigned long current_sp = get_sp();
+	
+	if(current_pid < 0){
+		return;
+	}
+
 	if(num_traces < MAX_TRACES){
 		trace_struct trace = {
-			.timestamp = get_time_ms(), 
-			.id_from = get_pid(),
-			.pc_from = get_interrupt_pc(),
-			.sp_from = get_sp(),
+			.timestamp = time, 
+			.id_from = current_pid,
+			.pc_from = current_pc,
+			.sp_from = current_sp,
 			.id_to = -1,
 			.pc_to = -1,
 			.sp_to = -1,
 		};
 		traces[num_traces] = &trace;
 		num_traces++;
+	}
+	else {
+		printf("MAX TRACES REACHED!");
 	}
 }
 
@@ -154,7 +179,7 @@ void timer_tick()
 
 int get_pid(void){
 	for(int i = 0; i < nr_tasks; i++){
-		if(task[i] == current){
+		if(task[i] && task[i] == current){
 			return i;
 		}
 	}
