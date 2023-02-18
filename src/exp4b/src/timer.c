@@ -29,6 +29,12 @@ void handle_generic_timer_irq( void )
     timer_tick();
 }
 
+
+unsigned long get_time_ms(void){
+	unsigned long sys_count = get_sys_count();
+	return (unsigned long) sys_count / 62500;
+}
+
 /* 
 	These are for "System Timer". They are NOT in use by this project. 
 	I leave the code here FYI. 
@@ -53,9 +59,4 @@ void handle_timer_irq( void )
 	put32(TIMER_C1, curVal);
 	put32(TIMER_CS, TIMER_CS_M1);
 	timer_tick();
-}
-
-unsigned long get_time_ms(void){
-	unsigned long sys_count = get_sys_count();
-	return (unsigned long) sys_count / 62500;
 }

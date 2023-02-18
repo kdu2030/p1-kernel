@@ -23,3 +23,13 @@ cpu_switch_to:
 	mov	sp, x9
 	ret
 
+.globl get_interrupt_pc
+get_interrupt_pc:
+	mrs x0, elr_el1
+	ret
+
+.globl get_sp
+get_sp:
+	mov x0, sp
+	ret
+
