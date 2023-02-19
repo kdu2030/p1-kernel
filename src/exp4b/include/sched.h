@@ -53,7 +53,10 @@ struct trace_struct {
 	unsigned long pc_to;
 	unsigned long sp_to;
 } typedef trace_struct;
-extern trace_struct* traces[MAX_TRACES];
+extern trace_struct traces[MAX_TRACES];
+extern trace_struct most_recent[NR_TASKS];
+
+extern void initialize_trace_arrays(void);
 
 extern void sched_init(void);
 extern void schedule(void);

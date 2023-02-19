@@ -39,6 +39,8 @@ void kernel_main(void)
 	enable_interrupt_controller();
 	enable_irq();
 
+	initialize_trace_arrays();
+
 	int res = copy_process((unsigned long)&process, (unsigned long)"12345");
 	if (res != 0) {
 		printf("error while starting process 1");

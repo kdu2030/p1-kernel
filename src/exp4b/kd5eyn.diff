@@ -1,0 +1,368 @@
+Only in .: build
+diff -r /home/kd5eyn/p1-kernel/src/exp4b/include/sched.h ./include/sched.h
+10a11
+> #define MAX_TRACES				50
+19a21
+> extern int num_traces;
+44a47,60
+> struct trace_struct {
+> 	unsigned long timestamp;
+> 	int id_from;
+> 	unsigned long pc_from;
+> 	unsigned long sp_from;
+> 	int id_to;
+> 	unsigned long pc_to;
+> 	unsigned long sp_to;
+> } typedef trace_struct;
+> extern trace_struct traces[MAX_TRACES];
+> extern trace_struct most_recent[NR_TASKS];
+> 
+> extern void initialize_trace_arrays(void);
+> 
+51a68,70
+> extern int get_pid(void);
+> extern unsigned long get_interrupt_pc(void);
+> extern unsigned long get_sp(void);
+diff -r /home/kd5eyn/p1-kernel/src/exp4b/include/timer.h ./include/timer.h
+12a13,16
+> extern int get_timer_freq(void);
+> extern unsigned long get_sys_count(void);
+> extern unsigned long get_time_ms(void);
+> 
+Only in .: kd5eyn.diff
+Only in .: kernel8.img
+diff -r /home/kd5eyn/p1-kernel/src/exp4b/src/entry.S ./src/entry.S
+47a48
+> 	
+diff -r /home/kd5eyn/p1-kernel/src/exp4b/src/irq.c ./src/irq.c
+5a6
+> #include "sched.h"
+diff -r /home/kd5eyn/p1-kernel/src/exp4b/src/kernel.c ./src/kernel.c
+28a29
+> 
+40a42,43
+> 	initialize_trace_arrays();
+> 
+48a52,61
+> 		return;
+> 	}
+> 	res = copy_process((unsigned long) &process, (unsigned long) "Hello");
+> 	if (res != 0){
+> 		printf("Error while starting process 3");
+> 		return;
+> 	}
+> 	res = copy_process((unsigned long) &process, (unsigned long) "there");
+> 	if(res != 0){
+> 		printf("Error while starting process 4");
+diff -r /home/kd5eyn/p1-kernel/src/exp4b/src/sched.c ./src/sched.c
+3a4
+> #include "timer.h"
+7c8,17
+< struct task_struct * task[NR_TASKS] = {&(init_task), };
+---
+> struct task_struct *task[NR_TASKS] = {
+> 	&(init_task),
+> };
+> trace_struct traces[MAX_TRACES] = {
+> 	0,
+> };
+> trace_struct most_recent[NR_TASKS] = {
+> 	0,
+> };
+> int num_traces = 0;
+20d29
+< 
+24c33
+< 		we still leave irq on, because irq handler may set a task to be TASK_RUNNING, which 
+---
+> 		we still leave irq on, because irq handler may set a task to be TASK_RUNNING, which
+26,30c35,40
+< 	preempt_disable(); 
+< 	int next,c;
+< 	struct task_struct * p;
+< 	while (1) {
+< 		c = -1; // the maximum counter of all tasks 
+---
+> 	preempt_disable();
+> 	int next, c;
+> 	struct task_struct *p;
+> 	while (1)
+> 	{
+> 		c = -1; // the maximum counter of all tasks
+33,35c43,45
+< 		/* Iterates over all tasks and tries to find a task in 
+< 		TASK_RUNNING state with the maximum counter. If such 
+< 		a task is found, we immediately break from the while loop 
+---
+> 		/* Iterates over all tasks and tries to find a task in
+> 		TASK_RUNNING state with the maximum counter. If such
+> 		a task is found, we immediately break from the while loop
+38c48,49
+< 		for (int i = 0; i < NR_TASKS; i++){
+---
+> 		for (int i = 0; i < NR_TASKS; i++)
+> 		{
+40c51,52
+< 			if (p && p->state == TASK_RUNNING && p->counter > c) {
+---
+> 			if (p && p->state == TASK_RUNNING && p->counter > c)
+> 			{
+45c57,58
+< 		if (c) {
+---
+> 		if (c)
+> 		{
+49c62
+< 		/* If no such task is found, this is either because i) no 
+---
+> 		/* If no such task is found, this is either because i) no
+51c64
+< 		in our current implemenation which misses TASK_WAIT, only condition ii) is possible. 
+---
+> 		in our current implemenation which misses TASK_WAIT, only condition ii) is possible.
+53,54c66,68
+< 		
+< 		for (int i = 0; i < NR_TASKS; i++) {
+---
+> 
+> 		for (int i = 0; i < NR_TASKS; i++)
+> 		{
+56c70,71
+< 			if (p) {
+---
+> 			if (p)
+> 			{
+71c86,125
+< void switch_to(struct task_struct * next) 
+---
+> // int get_pid_from_struct(struct task_struct* target_task){
+> // 	for(int i = 0; i < nr_tasks; i++){
+> // 		if(task[i] && task[i] == target_task){
+> // 			return i;
+> // 		}
+> // 	}
+> // 	return -1;
+> // }
+> 
+> // trace_struct* get_from_trace(struct task_struct* schedule_out){
+> // 	for(int i = 0; i < num_traces; i++){
+> // 		if(traces[i]->id_from == get_pid_from_struct(schedule_out)){
+> // 			return traces[i];
+> // 		}
+> // 	}
+> // 	return 0;
+> // }
+> 
+> void initialize_trace_arrays()
+> {
+> 	trace_struct initial_trace = {
+> 		.id_from = -1,
+> 		.id_to = -1,
+> 		.sp_from = 0,
+> 		.sp_to = 0,
+> 		.pc_from = 0,
+> 		.pc_to = 0};
+> 
+> 	for (int i = 0; i < MAX_TRACES; i++)
+> 	{
+> 		traces[i] = initial_trace;
+> 	}
+> 
+> 	for (int i = 0; i < NR_TASKS; i++)
+> 	{
+> 		most_recent[i] = initial_trace;
+> 	}
+> }
+> 
+> void update_new_trace()
+73,76c127,146
+< 	if (current == next) 
+< 		return;
+< 	struct task_struct * prev = current;
+< 	current = next;
+---
+> 	int schedule_in_pid = get_pid();
+> 	trace_struct schedule_out_trace = traces[num_traces - 1];
+> 	// Most recent trace of the scheduled in task
+> 	trace_struct most_recent_trace = most_recent[schedule_in_pid];
+> 
+> 	schedule_out_trace.id_to = schedule_in_pid;
+> 	// schedule_out_trace.timestamp = get_time_ms();
+> 
+> 	if (most_recent_trace.id_from != -1)
+> 	{
+> 		// printf("From %d to %d \n", schedule_out_trace->id_from, most_recent_trace->id_from);
+> 		schedule_out_trace.pc_to = most_recent_trace.pc_from;
+> 		schedule_out_trace.sp_to = most_recent_trace.sp_from;
+> 	}
+> 	else
+> 	{
+> 		// This is the first time that we have run the task
+> 		schedule_out_trace.pc_to = task[schedule_in_pid]->cpu_context.pc;
+> 		schedule_out_trace.sp_to = task[schedule_in_pid]->cpu_context.sp;
+> 	}
+78,79c148,150
+< 	/*	 
+< 		below is where context switch happens. 
+---
+> 	traces[num_traces - 1] = schedule_out_trace;
+> 	// printf("%d from task%d (PC 0x%x SP 0x%x) to task%d (PC 0x%x SP 0x%x) \n", schedule_out_trace.timestamp, schedule_out_trace.id_from, schedule_out_trace.pc_from, schedule_out_trace.sp_from, schedule_out_trace.id_to, schedule_out_trace.pc_to, schedule_out_trace.sp_to);
+> }
+81,91c152,162
+< 		after cpu_switch_to(), the @prev's cpu_context.pc points to the instruction right after  
+< 		cpu_switch_to(). this is where the @prev task will resume in the future. 
+< 		for example, shown as the arrow below: 
+< 
+< 			cpu_switch_to(prev, next);
+< 			80d50:       f9400fe1        ldr     x1, [sp, #24]
+< 			80d54:       f94017e0        ldr     x0, [sp, #40]
+< 			80d58:       9400083b        bl      82e44 <cpu_switch_to>
+< 		==> 80d5c:       14000002        b       80d64 <switch_to+0x58>
+< 	*/
+< 	cpu_switch_to(prev, next);  /* will branch to @next->cpu_context.pc ...*/
+---
+> void switch_to(struct task_struct *next)
+> {
+> 	if (current == next)
+> 		return;
+> 	struct task_struct *prev = current;
+> 	current = next;
+> 	if (num_traces > 0)
+> 	{
+> 		update_new_trace(next);
+> 	}
+> 	cpu_switch_to(prev, next);
+94c165,166
+< void schedule_tail(void) {
+---
+> void schedule_tail(void)
+> {
+97a170,214
+> void print_all_traces()
+> {
+> 	for (int i = 0; i < MAX_TRACES; i++)
+> 	{
+> 		trace_struct trace = traces[i];
+> 		printf("%d from task%d (PC 0x%x SP 0x%x) to task%d (PC 0x%x SP 0x%x) \n", trace.timestamp, trace.id_from, trace.pc_from, trace.sp_from, trace.id_to, trace.pc_to, trace.sp_to);
+> 	}
+> }
+> 
+> void initialize_trace()
+> {
+> 	int current_pid = get_pid();
+> 	unsigned long time = get_time_ms();
+> 	unsigned long current_pc = get_interrupt_pc();
+> 	unsigned long current_sp = get_sp();
+> 
+> 	if (current_pid == -1)
+> 	{
+> 		return;
+> 	}
+> 
+> 	trace_struct trace = {
+> 		.timestamp = time,
+> 		.id_from = current_pid,
+> 		.pc_from = current_pc,
+> 		.sp_from = current_sp,
+> 		.id_to = -1,
+> 		.pc_to = 0,
+> 		.sp_to = 0,
+> 	};
+> 	most_recent[current_pid] = trace;
+> 
+> 	if (num_traces < MAX_TRACES)
+> 	{
+> 		traces[num_traces] = trace;
+> 		num_traces++;
+> 	}
+> 	else {
+> 		print_all_traces();
+> 		traces[0] = trace;
+> 		num_traces = 1;
+> 	}
+> 
+> 	
+> }
+100a218
+> 	initialize_trace();
+102c220,221
+< 	if (current->counter > 0 || current->preempt_count > 0) 
+---
+> 	if (current->counter > 0 || current->preempt_count > 0)
+> 	{
+104,107c223,224
+< 	current->counter=0;
+< 
+< 	/* Note: we just came from an interrupt handler and CPU just automatically disabled all interrupts. 
+< 		Now call scheduler with interrupts enabled */
+---
+> 	}
+> 	current->counter = 0;
+110a228,239
+> }
+> 
+> int get_pid(void)
+> {
+> 	for (int i = 0; i < nr_tasks; i++)
+> 	{
+> 		if (task[i] && task[i] == current)
+> 		{
+> 			return i;
+> 		}
+> 	}
+> 	return -1;
+diff -r /home/kd5eyn/p1-kernel/src/exp4b/src/sched.S ./src/sched.S
+14c14
+< 	str	x30, [x8]				// x30=LR. this saves in task_struct the "return-to" address, i.e. the instruction right after the cpu_switch_to() callsite 
+---
+> 	str	x30, [x8]
+22c22
+< 	ldr	x30, [x8]				// load LR from memory ...
+---
+> 	ldr	x30, [x8]
+24c24,34
+< 	ret							// branch to LR (which was just loaded from memory)
+---
+> 	ret
+> 
+> .globl get_interrupt_pc
+> get_interrupt_pc:
+> 	mrs x0, elr_el1
+> 	ret
+> 
+> .globl get_sp
+> get_sp:
+> 	mov x0, sp
+> 	ret
+diff -r /home/kd5eyn/p1-kernel/src/exp4b/src/timer.c ./src/timer.c
+8c8,9
+< unsigned int interval = (1 << 26); // xzl: around 1 sec
+---
+> //unsigned int interval = (1 << 26); // xzl: around 1 sec
+> unsigned int interval = 62500 * 100;
+18a20
+> 	printf("Frequency is set to: %d\n", get_timer_freq());
+27a30,35
+> }
+> 
+> 
+> unsigned long get_time_ms(void){
+> 	unsigned long sys_count = get_sys_count();
+> 	return (unsigned long) sys_count / 62500;
+diff -r /home/kd5eyn/p1-kernel/src/exp4b/src/timer.S ./src/timer.S
+20c20,30
+<     ret
+\ No newline at end of file
+---
+>     ret
+> 
+> .globl get_timer_freq
+> get_timer_freq:
+> 	mrs x0, CNTFRQ_EL0
+> 	ret
+> 
+> .globl get_sys_count
+> get_sys_count:
+> 	mrs x0, CNTPCT_EL0
+> 	ret
+\ No newline at end of file
