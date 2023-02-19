@@ -99,6 +99,7 @@ void update_new_trace(){
 	for(int i = num_traces-1; i >= 0; i--){
 		if(traces[i] && traces[i]->id_from == schedule_in_pid){
 			most_recent_trace = traces[i];
+			break;
 		}
 	}
 
@@ -138,10 +139,9 @@ void initialize_trace(){
 	int current_pid = get_pid();
 	unsigned long time = get_time_ms();
 	unsigned long current_pc = get_interrupt_pc();
-
 	unsigned long current_sp = get_sp();
 	
-	if(current_pid < 0){
+	if(current_pid == -1){
 		return;
 	}
 
