@@ -176,13 +176,9 @@ void print_all_traces()
 	}
 }
 
-void initialize_trace()
-{
-	int current_pid = get_pid();
-	unsigned long time = get_time_ms();
-	unsigned long current_pc = get_interrupt_pc();
-	unsigned long current_sp = get_sp();
 
+void init_trace(unsigned long time, unsigned long interrupt_pc, unsigned long interrupt_sp){
+	int current_pid = get_pid();
 	if (current_pid == -1)
 	{
 		return;
@@ -191,8 +187,8 @@ void initialize_trace()
 	trace_struct trace = {
 		.timestamp = time,
 		.id_from = current_pid,
-		.pc_from = current_pc,
-		.sp_from = current_sp,
+		.pc_from = interrupt_pc,
+		.sp_from = interrupt_sp,
 		.id_to = -1,
 		.pc_to = 0,
 		.sp_to = 0,
@@ -209,13 +205,10 @@ void initialize_trace()
 		traces[0] = trace;
 		num_traces = 1;
 	}
-
-	
 }
 
 void timer_tick()
 {
-	initialize_trace();
 	--current->counter;
 	if (current->counter > 0 || current->preempt_count > 0)
 	{

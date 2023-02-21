@@ -1,43 +1,19 @@
-Only in .: build
-diff -r /home/kd5eyn/p1-kernel/src/exp4b/include/sched.h ./include/sched.h
-10a11
-> #define MAX_TRACES				50
-19a21
-> extern int num_traces;
-44a47,60
-> struct trace_struct {
-> 	unsigned long timestamp;
-> 	int id_from;
-> 	unsigned long pc_from;
-> 	unsigned long sp_from;
-> 	int id_to;
-> 	unsigned long pc_to;
-> 	unsigned long sp_to;
-> } typedef trace_struct;
-> extern trace_struct traces[MAX_TRACES];
-> extern trace_struct most_recent[NR_TASKS];
-> 
-> extern void initialize_trace_arrays(void);
-> 
-51a68,70
-> extern int get_pid(void);
-> extern unsigned long get_interrupt_pc(void);
-> extern unsigned long get_sp(void);
-diff -r /home/kd5eyn/p1-kernel/src/exp4b/include/timer.h ./include/timer.h
-12a13,16
-> extern int get_timer_freq(void);
-> extern unsigned long get_sys_count(void);
-> extern unsigned long get_time_ms(void);
-> 
-Only in .: kd5eyn.diff
-Only in .: kernel8.img
-diff -r /home/kd5eyn/p1-kernel/src/exp4b/src/entry.S ./src/entry.S
+diff -r /home/kd5eyn/p1-kernel/src/exp4b/src/entry.S ./entry.S
 47a48
 > 	
-diff -r /home/kd5eyn/p1-kernel/src/exp4b/src/irq.c ./src/irq.c
+diff -r /home/kd5eyn/p1-kernel/src/exp4b/src/irq.c ./irq.c
 5a6
 > #include "sched.h"
-diff -r /home/kd5eyn/p1-kernel/src/exp4b/src/kernel.c ./src/kernel.c
+42a44,48
+>     unsigned int sp = get_sp() + S_FRAME_SIZE + 32;
+>     unsigned int time = get_time_ms();
+>     unsigned int pc = get_interrupt_pc();
+> 
+> 
+45a52
+>             init_trace(time, pc, sp);
+Only in .: kd5eyn.diff
+diff -r /home/kd5eyn/p1-kernel/src/exp4b/src/kernel.c ./kernel.c
 28a29
 > 
 40a42,43
@@ -54,7 +30,7 @@ diff -r /home/kd5eyn/p1-kernel/src/exp4b/src/kernel.c ./src/kernel.c
 > 	res = copy_process((unsigned long) &process, (unsigned long) "there");
 > 	if(res != 0){
 > 		printf("Error while starting process 4");
-diff -r /home/kd5eyn/p1-kernel/src/exp4b/src/sched.c ./src/sched.c
+diff -r /home/kd5eyn/p1-kernel/src/exp4b/src/sched.c ./sched.c
 3a4
 > #include "timer.h"
 7c8,17
@@ -237,7 +213,7 @@ diff -r /home/kd5eyn/p1-kernel/src/exp4b/src/sched.c ./src/sched.c
 ---
 > void schedule_tail(void)
 > {
-97a170,214
+97a170,208
 > void print_all_traces()
 > {
 > 	for (int i = 0; i < MAX_TRACES; i++)
@@ -247,13 +223,9 @@ diff -r /home/kd5eyn/p1-kernel/src/exp4b/src/sched.c ./src/sched.c
 > 	}
 > }
 > 
-> void initialize_trace()
-> {
-> 	int current_pid = get_pid();
-> 	unsigned long time = get_time_ms();
-> 	unsigned long current_pc = get_interrupt_pc();
-> 	unsigned long current_sp = get_sp();
 > 
+> void init_trace(unsigned long time, unsigned long interrupt_pc, unsigned long interrupt_sp){
+> 	int current_pid = get_pid();
 > 	if (current_pid == -1)
 > 	{
 > 		return;
@@ -262,8 +234,8 @@ diff -r /home/kd5eyn/p1-kernel/src/exp4b/src/sched.c ./src/sched.c
 > 	trace_struct trace = {
 > 		.timestamp = time,
 > 		.id_from = current_pid,
-> 		.pc_from = current_pc,
-> 		.sp_from = current_sp,
+> 		.pc_from = interrupt_pc,
+> 		.sp_from = interrupt_sp,
 > 		.id_to = -1,
 > 		.pc_to = 0,
 > 		.sp_to = 0,
@@ -280,17 +252,13 @@ diff -r /home/kd5eyn/p1-kernel/src/exp4b/src/sched.c ./src/sched.c
 > 		traces[0] = trace;
 > 		num_traces = 1;
 > 	}
-> 
-> 	
 > }
-100a218
-> 	initialize_trace();
-102c220,221
+102c213,214
 < 	if (current->counter > 0 || current->preempt_count > 0) 
 ---
 > 	if (current->counter > 0 || current->preempt_count > 0)
 > 	{
-104,107c223,224
+104,107c216,217
 < 	current->counter=0;
 < 
 < 	/* Note: we just came from an interrupt handler and CPU just automatically disabled all interrupts. 
@@ -298,7 +266,7 @@ diff -r /home/kd5eyn/p1-kernel/src/exp4b/src/sched.c ./src/sched.c
 ---
 > 	}
 > 	current->counter = 0;
-110a228,239
+110a221,232
 > }
 > 
 > int get_pid(void)
@@ -311,7 +279,7 @@ diff -r /home/kd5eyn/p1-kernel/src/exp4b/src/sched.c ./src/sched.c
 > 		}
 > 	}
 > 	return -1;
-diff -r /home/kd5eyn/p1-kernel/src/exp4b/src/sched.S ./src/sched.S
+diff -r /home/kd5eyn/p1-kernel/src/exp4b/src/sched.S ./sched.S
 14c14
 < 	str	x30, [x8]				// x30=LR. this saves in task_struct the "return-to" address, i.e. the instruction right after the cpu_switch_to() callsite 
 ---
@@ -334,7 +302,7 @@ diff -r /home/kd5eyn/p1-kernel/src/exp4b/src/sched.S ./src/sched.S
 > get_sp:
 > 	mov x0, sp
 > 	ret
-diff -r /home/kd5eyn/p1-kernel/src/exp4b/src/timer.c ./src/timer.c
+diff -r /home/kd5eyn/p1-kernel/src/exp4b/src/timer.c ./timer.c
 8c8,9
 < unsigned int interval = (1 << 26); // xzl: around 1 sec
 ---
@@ -349,7 +317,7 @@ diff -r /home/kd5eyn/p1-kernel/src/exp4b/src/timer.c ./src/timer.c
 > unsigned long get_time_ms(void){
 > 	unsigned long sys_count = get_sys_count();
 > 	return (unsigned long) sys_count / 62500;
-diff -r /home/kd5eyn/p1-kernel/src/exp4b/src/timer.S ./src/timer.S
+diff -r /home/kd5eyn/p1-kernel/src/exp4b/src/timer.S ./timer.S
 20c20,30
 <     ret
 \ No newline at end of file

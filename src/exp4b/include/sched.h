@@ -57,6 +57,7 @@ extern trace_struct traces[MAX_TRACES];
 extern trace_struct most_recent[NR_TASKS];
 
 extern void initialize_trace_arrays(void);
+extern void init_trace(unsigned long time, unsigned long interrupt_pc, unsigned long interrupt_sp);
 
 extern void sched_init(void);
 extern void schedule(void);

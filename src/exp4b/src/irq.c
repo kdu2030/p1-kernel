@@ -41,9 +41,15 @@ void show_invalid_entry_message(int type, unsigned long esr, unsigned long addre
 void handle_irq(void)
 {
     // Each Core has its own pending local intrrupts register
+    unsigned int sp = get_sp() + S_FRAME_SIZE + 32;
+    unsigned int time = get_time_ms();
+    unsigned int pc = get_interrupt_pc();
+
+
     unsigned int irq = get32(INT_SOURCE_0);
     switch (irq) {
         case (GENERIC_TIMER_INTERRUPT):
+            init_trace(time, pc, sp);
             handle_generic_timer_irq();
             break;
         default:
