@@ -151,8 +151,6 @@ void update_new_trace()
 
 void switch_to(struct task_struct *next)
 {
-	if (current == next)
-		return;
 	struct task_struct *prev = current;
 	current = next;
 	if (num_traces > 0)
@@ -201,7 +199,7 @@ void init_trace(unsigned long time, unsigned long interrupt_pc, unsigned long in
 		num_traces++;
 	}
 	else {
-		print_all_traces();
+		//print_all_traces();
 		traces[0] = trace;
 		num_traces = 1;
 	}

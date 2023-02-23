@@ -13,6 +13,7 @@ void process(char *array)
 			uart_send(array[i]);
 			delay(5000000);
 		}
+		return;
 	}
 }
 

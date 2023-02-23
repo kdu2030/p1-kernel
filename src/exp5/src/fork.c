@@ -28,6 +28,7 @@ int copy_process(unsigned long clone_flags, unsigned long fn, unsigned long arg,
 		childregs->regs[0] = 0; /* return val of the clone() syscall */ 
 		childregs->sp = stack + PAGE_SIZE; 
 		p->stack = stack;
+		printf("Child Regs PC: %x \n", childregs->pc);
 	}
 	p->flags = clone_flags;
 	p->priority = current->priority;
