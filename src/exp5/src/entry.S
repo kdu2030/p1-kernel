@@ -153,10 +153,16 @@ el0_irq:
 	bl	handle_irq
 	kernel_exit 0 
 
+el0_undefined:
+	mrs x0, elr_el1
+	b invalid_instruction
+
 el0_sync:
 	kernel_entry 0
 	mrs	x25, esr_el1				// read the syndrome register
 	lsr	x24, x25, #ESR_ELx_EC_SHIFT		// exception class
+	cmp x24, #ESR_ELx_EC_UNDEFINED
+	b.eq el0_undefined
 	cmp	x24, #ESR_ELx_EC_SVC64			// SVC in 64-bit state
 	b.eq	el0_svc
 	handle_invalid_entry 0, SYNC_ERROR

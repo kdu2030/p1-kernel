@@ -16,6 +16,9 @@
 
 void user_process1(char *array)
 {
+	if(array[0] == '1'){
+		asm("mrs x0, CurrentEL");
+	}
 	char buf[2] = {0};
 	while (1){
 		for (int i = 0; i < 5; i++){

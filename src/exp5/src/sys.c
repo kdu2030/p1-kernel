@@ -4,6 +4,11 @@
 #include "sched.h"
 #include "mm.h"
 
+void invalid_instruction(unsigned long instr_address){
+	printf("Executed invalid instruction at 0x%x \n", instr_address);
+	exit_process();
+}
+
 void sys_write(char * buf){
 	printf(buf);
 }

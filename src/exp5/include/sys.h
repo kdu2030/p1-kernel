@@ -13,6 +13,7 @@
 void sys_write(char * buf);
 int sys_fork();
 
+void invalid_instruction(unsigned long instr_address);
 void call_sys_write(char * buf);
 int call_sys_clone(unsigned long fn, unsigned long arg, unsigned long stack);
 unsigned long call_sys_malloc();
