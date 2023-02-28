@@ -179,6 +179,8 @@ __create_idmap:
 
 __create_page_tables:
 	mov		x29, x30						// save return address
+	add sp, sp, #LOW_MEMORY
+	str x30, [sp]
 
 	// clear the mem region backing pgtables
 	adrp 	x0, pg_dir

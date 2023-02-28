@@ -23,7 +23,7 @@ int copy_process(unsigned long clone_flags, unsigned long fn, unsigned long arg,
 		p->cpu_context.x19 = fn;
 		p->cpu_context.x20 = arg;
 	} else {	/* user task, pop pt_regs which always at the task's user stack top */
-		struct pt_regs * cur_regs = task_pt_regs(current);
+		struct pt_regs * cur_regs = task_pt_regs(current); // Calculate current task's pt_regs
 		*cur_regs = *childregs;
 		childregs->regs[0] = 0; /* return val of the clone() syscall */ 
 		childregs->sp = stack + PAGE_SIZE; 
