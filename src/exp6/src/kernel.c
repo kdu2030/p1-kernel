@@ -10,6 +10,7 @@
 #include "mini_uart.h"
 #include "sys.h"
 #include "user.h"
+#include "peripherals/irq.h"
 
 
 void kernel_process(){
@@ -36,6 +37,10 @@ void kernel_main()
 //	generic_timer_init();
 	enable_interrupt_controller();
 	enable_irq();
+
+	put32(TIMER_INT_CTRL_0, TIMER_INT_CTRL_0_VALUE);
+	printf("Successfully accessed timer! \n");
+
 
 	int res = copy_process(PF_KTHREAD, (unsigned long)&kernel_process, 0);
 	if (res < 0) {
