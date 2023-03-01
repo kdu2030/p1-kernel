@@ -4,6 +4,7 @@
 #include "peripherals/base.h"
 
 #define VA_START 			0xffff000000000000
+#define VA_IRQ_START        0xffff000040000000
 
 #define PHYS_MEMORY_SIZE 		0x40000000	
 
@@ -29,7 +30,7 @@
 
 /* We use section mapping. The whole pgtable tree only needs three pgtables (each PAGE_SIZE). 
 That is, one pgtable at each of PGD/PUD/PMD. See our project document */
-#define PG_DIR_SIZE			(3 * PAGE_SIZE)  
+#define PG_DIR_SIZE			(4 * PAGE_SIZE)  
 
 #ifndef __ASSEMBLER__
 

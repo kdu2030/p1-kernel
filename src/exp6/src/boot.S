@@ -113,7 +113,8 @@ el1_entry:
 	.macro	create_pgd_entry, tbl, virt, tmp1, tmp2
 	create_table_entry \tbl, \virt, PGD_SHIFT, \tmp1, \tmp2  // set a PGD entry
 	// @tbl now points to the newly created PUD table
-	create_table_entry \tbl, \virt, PUD_SHIFT, \tmp1, \tmp2		// set a PUD entry
+	//create_table_entry \tbl, \virt, PUD_SHIFT, \tmp1, \tmp2		// set a PUD entry
+	create_pud_entries \tbl, \virt, PUD_SHIFT, \tmp1, \tmp2
 	// @tbl now points to the newly created PMD table
 	.endm
 
@@ -132,6 +133,25 @@ el1_entry:
 	add	\tmp2, \tbl, #PAGE_SIZE					// tmp2: addr of a next level pgtable (PUD or PMD). 
 	orr	\tmp2, \tmp2, #MM_TYPE_PAGE_TABLE		// tmp2: make a table descriptor. set bits[0:1] to 1. 
 	str	\tmp2, [\tbl, \tmp1, lsl #3]			// store descriptor (tmp2) to the current pgtable at index (tmp1)
+	add	\tbl, \tbl, #PAGE_SIZE					// point @tbl to the newly create next level pgtable. programming ease
+	.endm
+
+	// TODO: This should be called in create_pgd_entry
+	.macro create_pud_entries, tbl, virt, shift, tmp1, tmp2
+	lsr	\tmp1, \virt, #\shift
+	and	\tmp1, \tmp1, #PTRS_PER_TABLE - 1		// tmp1: table index
+	add	\tmp2, \tbl, #PAGE_SIZE					// tmp2: addr of a next level pgtable (PUD or PMD). 
+	orr	\tmp2, \tmp2, #MM_TYPE_PAGE_TABLE		// tmp2: make a table descriptor. set bits[0:1] to 1. 
+	str	\tmp2, [\tbl, \tmp1, lsl #3]			// store descriptor (tmp2) to the current pgtable at index (tmp1)
+	nop
+	ldr \tmp1, =(VA_IRQ_START)
+	lsr \tmp1, \tmp1, #\shift
+	and \tmp1, \tmp1, #PTRS_PER_TABLE - 1		// Get the index of VA_IRQ_START, with 1 as the PUD index
+	mov \tmp2, #PAGE_SIZE
+	lsl \tmp2, \tmp2, 1					// Do PAGE_SIZE * 2 and store it in tmp2
+	add \tmp2, \tmp2, \tbl						// Do PUD_BASE + 2 * PAGE_SIZE to get start of the second PMD Table
+	orr \tmp2, \tmp2, #MM_TYPE_PAGE_TABLE		// Add lower bits of the descriptor to tmp2
+	str \tmp2, [\tbl, \tmp1, lsl #3]			// Store this in PUD_BASE + PUD_INDEX (tmp1) * 8
 	add	\tbl, \tbl, #PAGE_SIZE					// point @tbl to the newly create next level pgtable. programming ease
 	.endm
 
@@ -179,8 +199,6 @@ __create_idmap:
 
 __create_page_tables:
 	mov		x29, x30						// save return address
-	add sp, sp, #LOW_MEMORY
-	str x30, [sp]
 
 	// clear the mem region backing pgtables
 	adrp 	x0, pg_dir
@@ -203,6 +221,13 @@ __create_page_tables:
 	ldr 	x2, =(VA_START + DEVICE_BASE)				// x2 = first virtual address
 	ldr		x3, =(VA_START + PHYS_MEMORY_SIZE - SECTION_SIZE)	// x3 = the virtual base of the last section
 	create_block_map x0, x1, x2, x3, MMU_DEVICE_FLAGS, x4
+
+	/* Mapping timer registers */
+	add x0, x0, #PAGE_SIZE	// Point to PMD 2
+	mov x1, #0x40000000 // x1 = Start mapping from physical address 0x40000000
+	ldr x2, =(VA_IRQ_START) // x2 = Start from VA_IRQ_START for the virtual address - This should have a PMD Index of 1
+	ldr x3, =(VA_IRQ_START + SECTION_SIZE)
+	create_block_map x0, x1, x2, x3, MMU_FLAGS, x4
 
 	mov	x30, x29						// restore return address
 	ret
