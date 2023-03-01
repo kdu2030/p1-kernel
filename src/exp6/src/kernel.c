@@ -34,12 +34,12 @@ void kernel_main()
 
 	irq_vector_init();
 	timer_init();
-//	generic_timer_init();
+	generic_timer_init();
 	enable_interrupt_controller();
 	enable_irq();
 
-	put32(TIMER_INT_CTRL_0, TIMER_INT_CTRL_0_VALUE);
-	printf("Successfully accessed timer! \n");
+	// put32(TIMER_INT_CTRL_0, TIMER_INT_CTRL_0_VALUE);
+	// printf("Successfully accessed timer! \n");
 
 
 	int res = copy_process(PF_KTHREAD, (unsigned long)&kernel_process, 0);
