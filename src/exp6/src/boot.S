@@ -136,7 +136,6 @@ el1_entry:
 	add	\tbl, \tbl, #PAGE_SIZE					// point @tbl to the newly create next level pgtable. programming ease
 	.endm
 
-	// TODO: This should be called in create_pgd_entry
 	.macro create_pud_entries, tbl, virt, shift, tmp1, tmp2
 	lsr	\tmp1, \virt, #\shift
 	and	\tmp1, \tmp1, #PTRS_PER_TABLE - 1		// tmp1: table index
